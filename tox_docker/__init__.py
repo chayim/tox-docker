@@ -172,6 +172,11 @@ def tox_configure(config):  # noqa: C901
                 if link_line.strip()
             )
 
+        try:
+            container_configs[container_name]["privileged"] = True
+        except KeyError:
+            container_configs[container_name]["privileged"] = False
+
         if reader.getstring("volumes"):
             container_configs[container_name]["mounts"] = [
                 _validate_volume_line(volume_line)
@@ -311,6 +316,7 @@ def tox_runtest_pre(venv):  # noqa: C901
                 ports=ports,
                 publish_all_ports=len(ports) == 0,
                 mounts=container_config.get("mounts", []),
+                privileged=container_config.get("privileged"),
             )
 
         envconfig._docker_containers[container_name] = container
